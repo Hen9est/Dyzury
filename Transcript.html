@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rozkład Dyżurów - Szkoła</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Nagłówek strony z dynamicznym dniem tygodnia, bez daty -->
+        <h1 id="main-title">ROZKŁAD DYŻURÓW - <span id="currentDay"></span></h1>
+
+        <div id="duty-table-container">
+            <!-- Tabela dyżurów zostanie wygenerowana tutaj przez JavaScript -->
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+        // Funkcja do określania indeksu aktualnie trwającej przerwy lub lekcji
+        function getHighlightState(allScheduleData) {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentTimeInMinutes = currentHour * 60 + currentMinute;
+
+            // Pobieramy listę przerw, która jest wspólna dla wszystkich dni
+            const breaks = allScheduleData.breaks;
+
+            for (let i = 0; i < breaks.length; i++) {
+                const breakTimeStr = breaks[i];
+                const timeMatch = breakTimeStr.match(/\((\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})\)/);
+
+                if (timeMatch) {
+                    const startHour = parseInt(timeMatch[1]);
+                    const startMinute = parseInt(timeMatch[2]);
+                    const endHour = parseInt(timeMatch[3]);
+                    const endMinute = parseInt(timeMatch[4]);
+
+                    const startTimeInMinutes = startHour * 60 + startMinute;
+                    const endTimeInMinutes = endHour * 60 + endMinute;
+
+                    // Sprawdzamy, czy aktualny czas mieści się w przedziale przerwy (wraz z 10-minutowym wyprzedzeniem)
+                    if (currentTimeInMinutes >= (startTimeInMinutes - 10) && currentTimeInMinutes <= endTimeInMinutes) {
+                        return { type: 'break', index: i }; // Zwracamy indeks aktualnej przerwy
+                    }
+
+                    // Sprawdzamy, czy aktualny czas mieści się w okresie lekcji po tej przerwie
+                    if (i < breaks.length - 1) { // Nie ostatnia przerwa
+                        const nextBreakTimeStr = breaks[i + 1];
+                        const nextTimeMatch = nextBreakTimeStr.match(/\((\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})\)/);
+
+                        if (nextTimeMatch) {
+                            const nextStartHour = parseInt(nextTimeMatch[1]);
+                            const nextStartMinute = parseInt(nextTimeMatch[2]);
+                            const nextStartTimeInMinutes = nextStartHour * 60 + nextStartMinute;
+
+                            // Jeśli aktualny czas jest po zakończeniu obecnej przerwy, ale przed rozpoczęciem następnej
+                            if (currentTimeInMinutes > endTimeInMinutes && currentTimeInMinutes < nextStartTimeInMinutes) {
+                                // To jest okres lekcji. Podświetlamy wiersz następnej przerwy, aby zasygnalizować
+                                // lekcję prowadzącą do niej.
+                                return { type: 'lesson', index: i + 1 };
+                            }
+                        }
+                    }
+                }
+            }
+            return { type: 'none', index: -1 }; // Brak aktywnej przerwy lub lekcji
+        }
+
+        // Funkcja do renderowania tabeli dyżurów na podstawie danych
+        function renderDutySchedule(allScheduleData) {
+            const container = document.getElementById('duty-table-container');
+            const today = new Date();
+            const optionsDay = { weekday: 'long' };
+            const currentDayName = today.toLocaleDateString('pl-PL', optionsDay).toLowerCase(); // np. "poniedziałek"
+
+            // Pobieramy rozkład dyżurów dla bieżącego dnia
+            const scheduleForToday = allScheduleData.dailySchedules[currentDayName];
+
+            // Jeśli brak rozkładu dla danego dnia (np. weekend lub nieuzupełniony dzień)
+            if (!scheduleForToday) {
+                container.innerHTML = `<p style="font-size:1.2em; margin-top:50px; color:#555;">Brak rozkładu dyżurów na ${currentDayName.charAt(0).toUpperCase() + currentDayName.slice(1)}.</p>`;
+                document.getElementById('currentDay').textContent = currentDayName.charAt(0).toUpperCase() + currentDayName.slice(1);
+                return; // Przerywamy renderowanie, jeśli brak danych
+            }
+
+            let html = '<table>';
+
+            // Określamy stan podświetlenia (przerwa, lekcja, brak)
+            const highlightState = getHighlightState(allScheduleData); // Przekazujemy całe dane, bo breaki są w nich
+
+            // Generowanie nagłówków kolumn (miejsca dyżurów)
+            html += '<thead><tr>';
+            html += '<th class="header-break">Przerwa</th>'; // Pusta komórka na początek
+            allScheduleData.locations.forEach(loc => { // Używamy allScheduleData.locations
+                html += `<th class="location-header" style="background-color: ${loc.color};">${loc.name}</th>`;
+            });
+            html += '</tr></thead>';
+
+            // Generowanie wierszy z przerwami i dyżurami
+            html += '<tbody>';
+            allScheduleData.breaks.forEach((breakName, breakIndex) => { // Używamy allScheduleData.breaks
+                let rowClass = '';
+                if (breakIndex === highlightState.index) {
+                    if (highlightState.type === 'break') {
+                        rowClass = 'current-break-row';
+                    } else if (highlightState.type === 'lesson') {
+                        rowClass = 'lesson-active-row';
+                    }
+                }
+                html += `<tr class="${rowClass}"><td class="break-name">${breakName}</td>`;
+                // Używamy scheduleForToday do pobrania nazwisk dla bieżącego dnia
+                scheduleForToday[breakIndex].forEach(duty => {
+                    html += `<td>${duty}</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</tbody>';
+            html +='</table>';
+
+            container.innerHTML = html;
+
+            // Ustawienie aktualnego dnia w nagłówku, z pierwszą literą dużą
+            document.getElementById('currentDay').textContent = currentDayName.charAt(0).toUpperCase() + currentDayName.slice(1);
+        }
+
+        // Renderuj harmonogram po załadowaniu danych
+        renderDutySchedule(dutyScheduleData);
+
+        // Funkcja do automatycznego odświeżania strony co minutę (60000 milisekund)
+        setInterval(() => {
+            renderDutySchedule(dutyScheduleData);
+        }, 60000); // Odświeżaj co minutę, aby podświetlenie było aktualne
+    </script>
+</body>
+</html>

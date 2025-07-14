@@ -1,0 +1,100 @@
+/* style.css - Arkusz stylów dla wyglądu strony */
+html, body {
+    width: 640px; /* Ustawienie stałej szerokości strony */
+    height: 420px; /* Ustawienie stałej wysokości strony */
+    margin: 0 auto; /* Wyśrodkowanie strony w poziomie */
+    padding: 0; /* Resetowanie domyślnego paddingu */
+    box-sizing: border-box; /* Model pudełkowy uwzględniający padding i border w rozmiarze */
+    overflow: hidden; /* Zapobiega pojawianiu się pasków przewijania */
+}
+
+body {
+    font-family: 'Arial', sans-serif; /* Zachowanie czcionki Arial dla czytelności */
+    background-color: #f0f0f0;
+    color: #333;
+    /* Ustawienie paddingu, aby zachować 25px przerwy od dolnej krawędzi */
+    padding: 0 0 25px 0; /* góra, prawo, dół, lewo - zmniejszony padding ogólny */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Wyrównanie zawartości do góry */
+}
+
+.container {
+    width: 100%; /* Kontener zajmuje całą dostępną szerokość body */
+    height: 100%; /* Kontener zajmuje całą dostępną wysokość body */
+    background-color: #ffffff;
+    border-radius: 8px; /* Nieznacznie mniejsze zaokrąglenia */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); /* Delikatniejszy cień */
+    padding: 0px; /* Zmniejszony padding wewnątrz kontenera */
+    text-align: center;
+    display: flex; /* Użycie flexbox dla lepszego rozmieszczenia tytułu i tabeli */
+    flex-direction: column;
+}
+
+#main-title {
+    font-size: 1.4em; /* Zwiększona czcionka dla tytułu */
+    color: #2c3e50;
+    margin-bottom: 5px; /* Zmniejszony margines pod tytułem */
+    padding-top: 10px; /* Dodatkowy padding na górze tytułu, aby nie był przyklejony do krawędzi */
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 0.05em; /* Lekkie rozstawienie liter dla efektu "rozkładu jazdy" */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0; /* Usunięty górny margines, aby tabela była bliżej tytułu */
+    flex-grow: 1; /* Tabela rozciąga się, aby wypełnić dostępną przestrzeń */
+    table-layout: fixed; /* Ustawienie stałego układu tabeli dla lepszej kontroli szerokości kolumn */
+}
+
+th, td {
+    border: 1px solid #ccc; /* Delikatniejsza ramka dla efektu "rozkładu jazdy" */
+    padding: 2px 1px; /* Zwiększony padding w komórkach dla lepszego dopasowania */
+    text-align: center;
+    font-size: 0.6em; /* Zwiększona czcionka dla nazwisk i przerw */
+    vertical-align: middle;
+    line-height: 1.2; /* Nieznacznie zwiększona wysokość linii dla zmieszczenia dwóch nazwisk */
+    word-wrap: break-word; /* Zapewnia łamanie długich słów */
+}
+
+thead th {
+    background-color: #e0e0e0;
+    color: #333;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.55em; /* Zwiększona czcionka dla nagłówków kolumn */
+    padding: 3px 1px; /* Minimalny padding dla nagłówków */
+}
+
+.location-header {
+    color: white; /* Biały tekst na kolorowym tle korytarzy */
+    border: 1px solid #777; /* Delikatna ramka dla lepszego kontrastu */
+}
+
+.break-name {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    font-size: 0.6em; /* Zwiększona czcionka dla nazw przerw */
+    color: #555;
+}
+
+/* Szerokość kolumny z przerwami */
+th:first-child, td:first-child {
+    width: 20%; /* Zwiększona szerokość dla nazw przerw */
+}
+
+/* Styl dla aktualnie trwającej przerwy (wraz z 10-minutowym wyprzedzeniem) */
+.current-break-row {
+    font-weight: bold; /* Pogrubienie tekstu */
+    background-color: #e6ffe6; /* Jasnozielone tło dla wyróżnienia */
+    border: 2px solid #4CAF50; /* Wyraźniejsza zielona ramka */
+}
+
+/* Nowy styl dla aktywnej lekcji (pogrubione linie) */
+.lesson-active-row {
+    font-weight: normal; /* Tekst nie jest pogrubiony */
+    background-color: #f5f5f5; /* Subtelne jasnoszare tło */
+    border: 2px solid #607D8B; /* Pogrubiona, szaro-niebieska ramka */
+}
