@@ -245,16 +245,62 @@
 
         // Funkcja do określania indeksu aktualnie trwającej przerwy lub lekcji
         function getHighlightState(allScheduleData) {
-            // Ta funkcja jest nieaktywna, ponieważ strona jest statyczna.
-            // Zwraca zawsze stan "none", aby nie było podświetleń.
-            return { type: 'none', index: -1 };
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentTimeInMinutes = currentHour * 60 + currentMinute;
+
+            // Pobieramy listę przerw, która jest wspólna dla wszystkich dni
+            const breaks = allScheduleData.breaks;
+
+            for (let i = 0; i < breaks.length; i++) {
+                const breakTimeStr = breaks[i];
+                const timeMatch = breakTimeStr.match(/\((\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})\)/);
+
+                if (timeMatch) {
+                    const startHour = parseInt(timeMatch[1]);
+                    const startMinute = parseInt(timeMatch[2]);
+                    const endHour = parseInt(timeMatch[3]);
+                    const endMinute = parseInt(timeMatch[4]);
+
+                    const startTimeInMinutes = startHour * 60 + startMinute;
+                    const endTimeInMinutes = endHour * 60 + endMinute;
+
+                    // Sprawdzamy, czy aktualny czas mieści się w przedziale przerwy (wraz z 10-minutowym wyprzedzeniem)
+                    if (currentTimeInMinutes >= (startTimeInMinutes - 10) && currentTimeInMinutes <= endTimeInMinutes) {
+                        return { type: 'break', index: i }; // Zwracamy indeks aktualnej przerwy
+                    }
+
+                    // Sprawdzamy, czy aktualny czas mieści się w okresie lekcji po tej przerwie
+                    if (i < breaks.length - 1) { // Nie ostatnia przerwa
+                        const nextBreakTimeStr = breaks[i + 1];
+                        const nextTimeMatch = nextBreakTimeStr.match(/\((\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})\)/);
+
+                        if (nextTimeMatch) {
+                            const nextStartHour = parseInt(nextTimeMatch[1]);
+                            const nextStartMinute = parseInt(nextTimeMatch[2]);
+                            const nextStartTimeInMinutes = nextStartHour * 60 + nextStartMinute;
+
+                            // Jeśli aktualny czas jest po zakończeniu obecnej przerwy, ale przed rozpoczęciem następnej
+                            if (currentTimeInMinutes > endTimeInMinutes && currentTimeInMinutes < nextStartTimeInMinutes) {
+                                // To jest okres lekcji. Podświetlamy wiersz następnej przerwy, aby zasygnalizować
+                                // lekcję prowadzącą do niej.
+                                return { type: 'lesson', index: i + 1 };
+                            }
+                        }
+                    }
+                }
+            }
+            return { type: 'none', index: -1 }; // Brak aktywnej przerwy lub lekcji
         }
 
         // Funkcja do renderowania tabeli dyżurów na podstawie danych
         function renderDutySchedule(allScheduleData) {
             const container = document.getElementById('duty-table-container');
-            // Ustawiamy dzień na poniedziałek, aby zawsze wyświetlał pełny grafik
-            const currentDayName = "poniedziałek"; // Zawsze wyświetlaj poniedziałek jako przykład
+            const today = new Date();
+            const optionsDay = { weekday: 'long' };
+            // Dynamiczne pobieranie nazwy bieżącego dnia
+            const currentDayName = today.toLocaleDateString('pl-PL', optionsDay).toLowerCase();
 
             // Pobieramy rozkład dyżurów dla bieżącego dnia
             const scheduleForToday = allScheduleData.dailySchedules[currentDayName];
@@ -269,7 +315,6 @@
             let html = '<table>';
 
             // Określamy stan podświetlenia (przerwa, lekcja, brak)
-            // Funkcja getHighlightState została zmodyfikowana, aby zawsze zwracać "none"
             const highlightState = getHighlightState(allScheduleData);
 
             // Generowanie nagłówków kolumn (miejsca dyżurów)
@@ -310,10 +355,11 @@
         // Renderuj harmonogram po załadowaniu danych
         renderDutySchedule(dutyScheduleData);
 
-        // Usunięto funkcję automatycznego odświeżania, aby strona była statyczna
-        // setInterval(() => {
-        //     renderDutySchedule(dutyScheduleData);
-        // }, 60000); // Odświeżaj co minutę, aby podświetlenie było aktualne
+        // Funkcja do automatycznego odświeżania strony co minutę (60000 milisekund)
+        // Ponownie włączono odświeżanie, aby podświetlenie było aktualne
+        setInterval(() => {
+            renderDutySchedule(dutyScheduleData);
+        }, 60000); // Odświeżaj co minutę, aby podświetlenie było aktualne
     </script>
 </body>
 </html>
