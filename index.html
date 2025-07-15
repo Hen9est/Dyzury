@@ -7,8 +7,7 @@
     <style>
         /* style.css - Arkusz stylów dla wyglądu strony */
         html, body {
-            /* Usunięto stałą szerokość i wysokość, aby strona była w pełni widoczna i adaptacyjna */
-            width: 100%; /* Ustawienie szerokości na 100% */
+            width: 100%; /* Ustawienie szerokości na 100% dla pełnej adaptacji */
             height: auto; /* Wysokość będzie dostosowywać się do zawartości */
             margin: 0 auto; /* Wyśrodkowanie strony w poziomie */
             padding: 0; /* Resetowanie domyślnego paddingu */
@@ -20,8 +19,8 @@
             font-family: 'Arial', sans-serif; /* Zachowanie czcionki Arial dla czytelności */
             background-color: #f0f0f0;
             color: #333;
-            /* Ustawienie paddingu, aby zachować 75px przerwy od dolnej krawędzi */
-            padding: 10px 10px 75px 10px; /* góra, prawo, dół, lewo - zwiększony padding na dole */
+            /* Ustawienie paddingu, aby zachować 100px przerwy od dolnej krawędzi */
+            padding: 10px 10px 100px 10px; /* góra, prawo, dół, lewo - zwiększony padding na dole do 100px */
             display: flex;
             justify-content: center;
             align-items: flex-start; /* Wyrównanie zawartości do góry */
@@ -356,7 +355,6 @@
         renderDutySchedule(dutyScheduleData);
 
         // Funkcja do automatycznego odświeżania strony co minutę (60000 milisekund)
-        // Ponownie włączono odświeżanie, aby podświetlenie było aktualne
         setInterval(() => {
             renderDutySchedule(dutyScheduleData);
         }, 60000); // Odświeżaj co minutę, aby podświetlenie było aktualne
