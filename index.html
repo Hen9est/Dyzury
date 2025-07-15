@@ -5,31 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rozkład Dyżurów - Szkoła</title>
     <style>
+        /* Uniwersalny reset marginesów i paddingu */
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
         /* style.css - Arkusz stylów dla wyglądu strony */
         html, body {
-            width: 100%; /* Ustawienie szerokości na 100% dla pełnej adaptacji */
-            height: auto; /* Wysokość będzie dostosowywać się do zawartości */
+            width: 640px; /* Ustawienie stałej szerokości strony */
+            height: 600px; /* Ustawienie stałej wysokości strony do 600px */
             margin: 0 auto; /* Wyśrodkowanie strony w poziomie */
-            padding: 0; /* Resetowanie domyślnego paddingu */
             box-sizing: border-box; /* Model pudełkowy uwzględniający padding i border w rozmiarze */
-            /* Usunięto overflow: hidden, aby cała zawartość była widoczna */
+            overflow: hidden; /* Zapobiega pojawianiu się pasków przewijania */
         }
 
         body {
             font-family: 'Arial', sans-serif; /* Zachowanie czcionki Arial dla czytelności */
             background-color: #f0f0f0;
             color: #333;
-            /* Ustawienie paddingu, aby zachować 200px przerwy od dolnej krawędzi (100px + 100px) */
-            padding: 10px 10px 200px 10px; /* góra, prawo, dół, lewo - zwiększony padding na dole do 200px */
+            /* Ustawienie paddingu: 0px góra, 0px prawo, 100px dół, 0px lewo */
+            padding: 0px 0px 100px 0px; /* Minimalne marginesy boczne, tylko 100px na dole */
             display: flex;
-            justify-content: center;
+            /* Usunięto justify-content: center, ponieważ body ma teraz stałą szerokość i jest wyśrodkowane przez margin: auto */
             align-items: flex-start; /* Wyrównanie zawartości do góry */
-            min-height: 100vh; /* Minimalna wysokość, aby zajmować całą wysokość widoku */
+            width: 640px; /* Jawne ustawienie szerokości body */
+            height: 600px; /* Jawne ustawienie wysokości body */
         }
 
         .container {
-            width: 100%; /* Kontener zajmuje całą dostępną szerokość body */
-            height: auto; /* Wysokość będzie dostosowywać się do zawartości */
+            width: 100%; /* Kontener zajmuje całą dostępną szerokość body (640px) */
+            height: 460px; /* Ustawienie stałej wysokości kontenera treści na 460px */
             background-color: #ffffff;
             border-radius: 8px; /* Nieznacznie mniejsze zaokrąglenia */
             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); /* Delikatniejszy cień */
@@ -37,34 +43,53 @@
             text-align: center;
             display: flex; /* Użycie flexbox dla lepszego rozmieszczenia tytułu i tabeli */
             flex-direction: column;
+            /* Usunięto overflow: hidden, aby nie ukrywać zawartości, gdy wysokość jest kontrolowana */
         }
 
         #main-title {
-            font-size: 1.4em; /* Zwiększona czcionka dla tytułu */
+            font-size: 1em; /* Zmniejszona czcionka dla tytułu */
             color: #2c3e50;
-            margin-bottom: 5px; /* Zmniejszony margines pod tytułem */
-            padding-top: 10px; /* Dodatkowy padding na górze tytułu, aby nie był przyklejony do krawędzi */
+            margin-bottom: 0px; /* Usunięty margines, aby zaoszczędzić miejsce */
+            padding-top: 5px; /* Minimalny padding */
+            padding-bottom: 5px; /* Dodatkowy padding dolny, aby zdefiniować wysokość */
             text-transform: uppercase;
             font-weight: bold;
-            letter-spacing: 0.05em; /* Lekkie rozstawienie liter dla efektu "rozkładu jazdy" */
+            letter-spacing: 0.05em;
+            height: 35px; /* Jawna wysokość dla tytułu */
+            line-height: 25px; /* Dostosowana wysokość linii, aby zmieścić tekst */
         }
 
         table {
             width: 100%;
+            height: calc(100% - 35px); /* Tabela zajmuje pozostałą wysokość kontenera (460px - 35px tytułu) */
             border-collapse: collapse;
             margin-top: 0; /* Usunięty górny margines, aby tabela była bliżej tytułu */
             flex-grow: 1; /* Tabela rozciąga się, aby wypełnić dostępną przestrzeń */
             table-layout: fixed; /* Ustawienie stałego układu tabeli dla lepszej kontroli szerokości kolumn */
         }
 
+        thead {
+            height: 40px; /* Stała wysokość dla nagłówka tabeli */
+        }
+
+        tbody {
+            height: calc(100% - 40px); /* Pozostała wysokość dla ciała tabeli */
+            display: table-row-group; /* Upewnia się, że tbody zachowuje się jak grupa wierszy tabeli */
+        }
+
+        tbody tr {
+            height: calc(100% / 8); /* Rozkłada wysokość równomiernie na 8 wierszy danych */
+        }
+
         th, td {
             border: 1px solid #ccc; /* Delikatniejsza ramka dla efektu "rozkładu jazdy" */
-            padding: 2px 1px; /* Zwiększony padding w komórkach dla lepszego dopasowania */
+            padding: 0px; /* Zmniejszony padding w komórkach do 0 */
             text-align: center;
-            font-size: 0.6em; /* Zwiększona czcionka dla nazwisk i przerw */
+            font-size: 0.5em; /* Zmniejszona czcionka dla nazwisk i przerw */
             vertical-align: middle;
-            line-height: 1.2; /* Nieznacznie zwiększona wysokość linii dla zmieszczenia dwóch nazwisk */
+            line-height: 1; /* Zmniejszona wysokość linii do 1 */
             word-wrap: break-word; /* Zapewnia łamanie długich słów */
+            height: 100%; /* Komórki wypełniają wysokość wiersza */
         }
 
         thead th {
@@ -72,8 +97,8 @@
             color: #333;
             font-weight: bold;
             text-transform: uppercase;
-            font-size: 0.55em; /* Zwiększona czcionka dla nagłówków kolumn */
-            padding: 3px 1px; /* Minimalny padding dla nagłówków */
+            font-size: 0.45em; /* Zmniejszona czcionka dla nagłówków kolumn */
+            padding: 1px; /* Minimalny padding dla nagłówków */
         }
 
         .location-header {
@@ -84,7 +109,7 @@
         .break-name {
             background-color: #f2f2f2;
             font-weight: bold;
-            font-size: 0.6em; /* Zwiększona czcionka dla nazw przerw */
+            font-size: 0.5em; /* Zmniejszona czcionka dla nazw przerw */
             color: #555;
         }
 
