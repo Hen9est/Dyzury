@@ -3,20 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harmonogram Dyżurów</title>
+    <title>Szkolne Dyżury</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1 id="main-title">Ładowanie harmonogramu...</h1>
-        <table id="duty-table">
-            <!-- Tabela zostanie wygenerowana przez script.js -->
+        <h1 id="header-date">Ładowanie daty...</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Przerwa</th>
+                    <th>Miejsce</th>
+                    <th>Nauczyciel</th>
+                </tr>
+            </thead>
+            <tbody id="schedule-body">
+                </tbody>
         </table>
     </div>
-
-    <!-- Dołączenie plików z danymi i logiką -->
-    <script src="data.js"></script> 
     <script src="script.js"></script>
 </body>
 </html>
-
