@@ -1,100 +1,125 @@
-/* style.css - Arkusz stylów dla wyglądu strony */
-html, body {
-    width: 640px; /* Ustawienie stałej szerokości strony */
-    height: 420px; /* Ustawienie stałej wysokości strony */
-    margin: 0 auto; /* Wyśrodkowanie strony w poziomie */
-    padding: 0; /* Resetowanie domyślnego paddingu */
-    box-sizing: border-box; /* Model pudełkowy uwzględniający padding i border w rozmiarze */
-    overflow: hidden; /* Zapobiega pojawianiu się pasków przewijania */
-}
+/* style.css - Zaktualizowany arkusz stylów dla widoku tygodniowego */
 
+/* --- Ustawienia globalne --- */
 body {
-    font-family: 'Arial', sans-serif; /* Zachowanie czcionki Arial dla czytelności */
-    background-color: #f0f0f0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f2f5; /* Delikatnie zmienione tło */
     color: #333;
-    /* Ustawienie paddingu, aby zachować 25px przerwy od dolnej krawędzi */
-    padding: 0 0 25px 0; /* góra, prawo, dół, lewo - zmniejszony padding ogólny */
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; /* Wyrównanie zawartości do góry */
+    margin: 0;
+    padding: 20px; /* Dodanie przestrzeni wokół całej zawartości */
+    line-height: 1.5;
 }
 
+/* --- Główny kontener --- */
 .container {
-    width: 100%; /* Kontener zajmuje całą dostępną szerokość body */
-    height: 100%; /* Kontener zajmuje całą dostępną wysokość body */
+    width: 95%;
+    max-width: 1400px; /* Ograniczenie szerokości na dużych ekranach */
+    margin: 0 auto; /* Wyśrodkowanie kontenera */
     background-color: #ffffff;
-    border-radius: 8px; /* Nieznacznie mniejsze zaokrąglenia */
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); /* Delikatniejszy cień */
-    padding: 0px; /* Zmniejszony padding wewnątrz kontenera */
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 25px;
     text-align: center;
-    display: flex; /* Użycie flexbox dla lepszego rozmieszczenia tytułu i tabeli */
-    flex-direction: column;
 }
 
+/* --- Tytuły --- */
 #main-title {
-    font-size: 1.4em; /* Zwiększona czcionka dla tytułu */
+    font-size: 2.2em; /* Powiększony główny tytuł */
     color: #2c3e50;
-    margin-bottom: 5px; /* Zmniejszony margines pod tytułem */
-    padding-top: 10px; /* Dodatkowy padding na górze tytułu, aby nie był przyklejony do krawędzi */
+    margin-bottom: 30px;
     text-transform: uppercase;
     font-weight: bold;
-    letter-spacing: 0.05em; /* Lekkie rozstawienie liter dla efektu "rozkładu jazdy" */
+    letter-spacing: 1px;
+    border-bottom: 2px solid #e0e0e0; /* Subtelne podkreślenie */
+    padding-bottom: 15px;
 }
 
+/* Tytuł każdego dnia (np. "Poniedziałek") */
+h2 {
+    font-size: 1.8em;
+    color: #34495e;
+    text-align: left; /* Wyrównanie do lewej dla lepszej struktury */
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+/* --- Kontener dla pojedynczej tabeli dnia --- */
+.day-schedule {
+    margin-bottom: 50px; /* Zwiększony odstęp między tabelami */
+}
+
+/* --- Stylizacja tabel --- */
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 0; /* Usunięty górny margines, aby tabela była bliżej tytułu */
-    flex-grow: 1; /* Tabela rozciąga się, aby wypełnić dostępną przestrzeń */
-    table-layout: fixed; /* Ustawienie stałego układu tabeli dla lepszej kontroli szerokości kolumn */
+    table-layout: fixed; /* Stały układ kolumn dla równego wyglądu */
+    font-size: 0.9em; /* Zwiększona domyślna czcionka w tabeli */
 }
 
 th, td {
-    border: 1px solid #ccc; /* Delikatniejsza ramka dla efektu "rozkładu jazdy" */
-    padding: 2px 1px; /* Zwiększony padding w komórkach dla lepszego dopasowania */
+    border: 1px solid #ddd; /* Jaśniejsza ramka */
+    padding: 8px 5px; /* Lepszy odstęp w komórkach */
     text-align: center;
-    font-size: 0.6em; /* Zwiększona czcionka dla nazwisk i przerw */
     vertical-align: middle;
-    line-height: 1.2; /* Nieznacznie zwiększona wysokość linii dla zmieszczenia dwóch nazwisk */
-    word-wrap: break-word; /* Zapewnia łamanie długich słów */
+    word-wrap: break-word;
 }
 
+/* --- Nagłówek tabeli --- */
 thead th {
-    background-color: #e0e0e0;
+    background-color: #f7f7f7;
     color: #333;
     font-weight: bold;
     text-transform: uppercase;
-    font-size: 0.55em; /* Zwiększona czcionka dla nagłówków kolumn */
-    padding: 3px 1px; /* Minimalny padding dla nagłówków */
+    font-size: 0.8em;
+    padding: 10px 5px;
 }
 
+/* Nagłówki z nazwami lokalizacji (kolorowe) */
 .location-header {
-    color: white; /* Biały tekst na kolorowym tle korytarzy */
-    border: 1px solid #777; /* Delikatna ramka dla lepszego kontrastu */
+    color: white;
+    font-weight: bold;
 }
 
+/* --- Komórki z nazwami przerw --- */
 .break-name {
     background-color: #f2f2f2;
     font-weight: bold;
-    font-size: 0.6em; /* Zwiększona czcionka dla nazw przerw */
     color: #555;
+    font-size: 0.85em;
 }
 
-/* Szerokość kolumny z przerwami */
+/* Ustawienie szerokości pierwszej kolumny (Przerwy) */
 th:first-child, td:first-child {
-    width: 20%; /* Zwiększona szerokość dla nazw przerw */
+    width: 16%; /* Zapewnienie odpowiedniej szerokości na nazwy przerw */
 }
 
-/* Styl dla aktualnie trwającej przerwy (wraz z 10-minutowym wyprzedzeniem) */
+/* --- Podświetlenie aktualnej przerwy --- */
 .current-break-row {
-    font-weight: bold; /* Pogrubienie tekstu */
-    background-color: #e6ffe6; /* Jasnozielone tło dla wyróżnienia */
-    border: 2px solid #4CAF50; /* Wyraźniejsza zielona ramka */
+    background-color: #e6ffed !important; /* Jaśniejsze, ale wyraźne zielone tło */
+    font-weight: bold;
 }
 
-/* Nowy styl dla aktywnej lekcji (pogrubione linie) */
-.lesson-active-row {
-    font-weight: normal; /* Tekst nie jest pogrubiony */
-    background-color: #f5f5f5; /* Subtelne jasnoszare tło */
-    border: 2px solid #607D8B; /* Pogrubiona, szaro-niebieska ramka */
+.current-break-row td, .current-break-row th {
+    border-top: 2px solid #28a745; /* Grubsza górna i dolna ramka */
+    border-bottom: 2px solid #28a745;
+}
+
+/* --- Responsywność dla mniejszych ekranów --- */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    .container {
+        padding: 15px;
+    }
+    th, td {
+        font-size: 0.75em; /* Zmniejszenie czcionki na urządzeniach mobilnych */
+        padding: 5px 2px;
+    }
+    #main-title {
+        font-size: 1.5em;
+    }
+    h2 {
+        font-size: 1.3em;
+    }
 }
