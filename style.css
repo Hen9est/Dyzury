@@ -1,80 +1,73 @@
-/* style.css - Zaktualizowany arkusz stylów dla widoku tygodniowego */
+/* style.css - Zaktualizowany arkusz stylów dla widoku dziennego */
 
 /* --- Ustawienia globalne --- */
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Zapobiega pojawianiu się pasków przewijania */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f2f5;
+}
+
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #f0f2f5; /* Delikatnie zmienione tło */
     color: #333;
-    margin: 0;
-    padding: 20px; /* Dodanie przestrzeni wokół całej zawartości */
-    line-height: 1.5;
 }
 
 /* --- Główny kontener --- */
 .container {
-    width: 95%;
-    max-width: 1400px; /* Ograniczenie szerokości na dużych ekranach */
-    margin: 0 auto; /* Wyśrodkowanie kontenera */
+    width: 1280px; /* Stała szerokość dla ekranu informacyjnego */
+    height: 720px; /* Stała wysokość */
     background-color: #ffffff;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     padding: 25px;
     text-align: center;
+    display: flex;
+    flex-direction: column;
 }
 
 /* --- Tytuły --- */
 #main-title {
-    font-size: 2.2em; /* Powiększony główny tytuł */
+    font-size: 2.5em;
     color: #2c3e50;
-    margin-bottom: 30px;
-    text-transform: uppercase;
+    margin-bottom: 20px;
     font-weight: bold;
     letter-spacing: 1px;
-    border-bottom: 2px solid #e0e0e0; /* Subtelne podkreślenie */
-    padding-bottom: 15px;
-}
-
-/* Tytuł każdego dnia (np. "Poniedziałek") */
-h2 {
-    font-size: 1.8em;
-    color: #34495e;
-    text-align: left; /* Wyrównanie do lewej dla lepszej struktury */
-    margin-top: 20px;
-    margin-bottom: 15px;
-}
-
-/* --- Kontener dla pojedynczej tabeli dnia --- */
-.day-schedule {
-    margin-bottom: 50px; /* Zwiększony odstęp między tabelami */
+    flex-shrink: 0; /* Zapobiega kurczeniu się tytułu */
 }
 
 /* --- Stylizacja tabel --- */
 table {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed; /* Stały układ kolumn dla równego wyglądu */
-    font-size: 0.9em; /* Zwiększona domyślna czcionka w tabeli */
+    table-layout: fixed;
+    font-size: 1.2em; /* Zwiększona czcionka dla lepszej czytelności na ekranie */
+    flex-grow: 1; /* Tabela wypełnia dostępną przestrzeń */
 }
 
 th, td {
-    border: 1px solid #ddd; /* Jaśniejsza ramka */
-    padding: 8px 5px; /* Lepszy odstęp w komórkach */
+    border: 1px solid #ddd;
+    padding: 5px; /* Dopasowany padding */
     text-align: center;
     vertical-align: middle;
     word-wrap: break-word;
+    line-height: 1.3;
 }
 
 /* --- Nagłówek tabeli --- */
 thead th {
     background-color: #f7f7f7;
-    color: #333;
     font-weight: bold;
     text-transform: uppercase;
-    font-size: 0.8em;
+    font-size: 0.9em;
     padding: 10px 5px;
 }
 
-/* Nagłówki z nazwami lokalizacji (kolorowe) */
 .location-header {
     color: white;
     font-weight: bold;
@@ -85,41 +78,30 @@ thead th {
     background-color: #f2f2f2;
     font-weight: bold;
     color: #555;
-    font-size: 0.85em;
+    font-size: 0.9em;
 }
 
-/* Ustawienie szerokości pierwszej kolumny (Przerwy) */
 th:first-child, td:first-child {
-    width: 16%; /* Zapewnienie odpowiedniej szerokości na nazwy przerw */
+    width: 18%; /* Szerokość pierwszej kolumny */
 }
 
 /* --- Podświetlenie aktualnej przerwy --- */
 .current-break-row {
-    background-color: #e6ffed !important; /* Jaśniejsze, ale wyraźne zielone tło */
+    background-color: #d4edda !important; /* Zielone tło */
     font-weight: bold;
 }
-
-.current-break-row td, .current-break-row th {
-    border-top: 2px solid #28a745; /* Grubsza górna i dolna ramka */
-    border-bottom: 2px solid #28a745;
+.current-break-row td {
+    border-top: 3px solid #155724;
+    border-bottom: 3px solid #155724;
 }
 
-/* --- Responsywność dla mniejszych ekranów --- */
-@media (max-width: 768px) {
-    body {
-        padding: 10px;
-    }
-    .container {
-        padding: 15px;
-    }
-    th, td {
-        font-size: 0.75em; /* Zmniejszenie czcionki na urządzeniach mobilnych */
-        padding: 5px 2px;
-    }
-    #main-title {
-        font-size: 1.5em;
-    }
-    h2 {
-        font-size: 1.3em;
-    }
+/* --- Podświetlenie nadchodzącej przerwy --- */
+.upcoming-break-row {
+    background-color: #fff3cd !important; /* Żółte tło */
+    font-weight: bold;
 }
+.upcoming-break-row td {
+    border-top: 3px solid #856404;
+    border-bottom: 3px solid #856404;
+}
+
