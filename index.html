@@ -3,76 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tygodniowy Harmonogram Dyżurów</title>
+    <title>Harmonogram Dyżurów</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Dodatkowe style, aby wyświetlić wszystkie tabele i umożliwić przewijanie */
-        html, body {
-            width: auto; /* Zmiana szerokości na automatyczną */
-            height: auto; /* Zmiana wysokości na automatyczną */
-            overflow: auto; /* Włączenie pasków przewijania w razie potrzeby */
-            margin: 0;
-            padding: 20px; /* Dodanie marginesu dla lepszego wyglądu */
-        }
-        .container {
-            width: 95%;
-            max-width: 1200px; /* Ograniczenie maksymalnej szerokości */
-            height: auto;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .day-schedule {
-            margin-bottom: 40px; /* Zwiększony odstęp między tabelami dni */
-        }
-        #main-title {
-            font-size: 2em;
-            margin-bottom: 25px;
-        }
-        h2 {
-            text-align: left;
-            margin-left: 10px;
-            color: #2c3e50;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
-        <h1 id="main-title">Tygodniowy Harmonogram Dyżurów</h1>
-        
-        <!-- Sekcja dla Poniedziałku -->
-        <div id="poniedzialek-schedule" class="day-schedule">
-            <h2>Poniedziałek</h2>
-            <table id="table-poniedziałek"></table>
-        </div>
-        
-        <!-- Sekcja dla Wtorku -->
-        <div id="wtorek-schedule" class="day-schedule">
-            <h2>Wtorek</h2>
-            <table id="table-wtorek"></table>
-        </div>
-
-        <!-- Sekcja dla Środy -->
-        <div id="sroda-schedule" class="day-schedule">
-            <h2>Środa</h2>
-            <table id="table-środa"></table>
-        </div>
-
-        <!-- Sekcja dla Czwartku -->
-        <div id="czwartek-schedule" class="day-schedule">
-            <h2>Czwartek</h2>
-            <table id="table-czwartek"></table>
-        </div>
-
-        <!-- Sekcja dla Piątku -->
-        <div id="piatek-schedule" class="day-schedule">
-            <h2>Piątek</h2>
-            <table id="table-piątek"></table>
-        </div>
-
+        <h1 id="main-title">Harmonogram Dyżurów</h1>
+        <table id="duty-table">
+            <!-- Tabela zostanie wygenerowana przez script.js -->
+        </table>
     </div>
 
-    <!-- Dołączenie plików z danymi i logiką -->
-    <script src="data.js"></script>
+    <!-- Pamiętaj, aby plik data.js był w tym samym folderze -->
+    <script src="data.js"></script> 
     <script src="script.js"></script>
 </body>
 </html>
+
