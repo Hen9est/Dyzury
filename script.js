@@ -1,107 +1,109 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Sprawdzenie, czy dane dyżurów są dostępne
-    if (typeof dutyScheduleData === 'undefined') {
-        console.error("Błąd: Nie znaleziono danych w pliku data.js!");
-        document.getElementById('main-title').textContent = "Błąd ładowania danych!";
-        return;
-    }
+// Krok 1: Twoje dane z pliku CSV w formacie JavaScript
+const scheduleData = [
+    { day: "pon.", time: "8:45-8:55", location: "parter", teacher: "Nowak A." },
+    { day: "pon.", time: "8:45-8:55", location: "I piętro", teacher: "Barańska" },
+    { day: "pon.", time: "9:40-9:50", location: "parter", teacher: "Głowacka" },
+    { day: "pon.", time: "9:40-9:50", location: "I piętro", teacher: "Barańska" },
+    { day: "pon.", time: "10:35-10:50", location: "parter", teacher: "Nowak A." },
+    { day: "pon.", time: "10:35-10:50", location: "I piętro", teacher: "Kowalczyk" },
+    { day: "pon.", time: "11:35-11:45", location: "parter", teacher: "Zając" },
+    { day: "pon.", time: "11:35-11:45", location: "I piętro", teacher: "Kowalczyk" },
+    { day: "wt.", time: "8:45-8:55", location: "parter", teacher: "Zając" },
+    { day: "wt.", time: "8:45-8:55", location: "I piętro", teacher: "Głowacka" },
+    { day: "wt.", time: "9:40-9:50", location: "parter", teacher: "Nowak A." },
+    { day: "wt.", time: "9:40-9:50", location: "I piętro", teacher: "Głowacka" },
+    { day: "wt.", time: "10:35-10:50", location: "parter", teacher: "Barańska" },
+    { day: "wt.", time: "10:35-10:50", location: "I piętro", teacher: "Kowalczyk" },
+    { day: "wt.", time: "11:35-11:45", location: "parter", teacher: "Barańska" },
+    { day: "wt.", time: "11:35-11:45", location: "I piętro", teacher: "Kowalczyk" },
+    { day: "śr.", time: "8:45-8:55", location: "parter", teacher: "Głowacka" },
+    { day: "śr.", time: "8:45-8:55", location: "I piętro", teacher: "Barańska" },
+    { day: "śr.", time: "9:40-9:50", location: "parter", teacher: "Głowacka" },
+    { day: "śr.", time: "9:40-9:50", location: "I piętro", teacher: "Nowak A." },
+    { day: "śr.", time: "10:35-10:50", location: "parter", teacher: "Zając" },
+    { day: "śr.", time: "10:35-10:50", location: "I piętro", teacher: "Nowak A." },
+    { day: "śr.", time: "11:35-11:45", location: "parter", teacher: "Zając" },
+    { day: "śr.", time: "11:35-11:45", location: "I piętro", teacher: "Kowalczyk" },
+    { day: "czw.", time: "8:45-8:55", location: "parter", teacher: "Kowalczyk" },
+    { day: "czw.", time: "8:45-8:55", location: "I piętro", teacher: "Głowacka" },
+    { day: "czw.", time: "9:40-9:50", location: "parter", teacher: "Kowalczyk" },
+    { day: "czw.", time: "9:40-9:50", location: "I piętro", teacher: "Głowacka" },
+    { day: "czw.", time: "10:35-10:50", location: "parter", teacher: "Nowak A." },
+    { day: "czw.", time: "10:35-10:50", location: "I piętro", teacher: "Barańska" },
+    { day: "czw.", time: "11:35-11:45", location: "parter", teacher: "Nowak A." },
+    { day: "czw.", time: "11:35-11:45", location: "I piętro", teacher: "Barańska" },
+    { day: "pt.", time: "8:45-8:55", location: "parter", teacher: "Zając" },
+    { day: "pt.", time: "8:45-8:55", location: "I piętro", teacher: "Nowak A." },
+    { day: "pt.", time: "9:40-9:50", location: "parter", teacher: "Zając" },
+    { day: "pt.", time: "9:40-9:50", location: "I piętro", teacher: "Nowak A." },
+    { day: "pt.", time: "10:35-10:50", location: "parter", teacher: "Kowalczyk" },
+    { day: "pt.", time: "10:35-10:50", location: "I piętro", teacher: "Barańska" },
+    { day: "pt.", time: "11:35-11:45", location: "parter", teacher: "Kowalczyk" },
+    { day: "pt.", time: "11:35-11:45", location: "I piętro", teacher: "Barańska" },
+];
 
-    const { breaks, locations, dailySchedules } = dutyScheduleData;
-    const tableElement = document.getElementById('duty-table');
-    const titleElement = document.getElementById('main-title');
-    
-    // Ustawia, ile minut przed przerwą ma się ona podświetlić jako "nadchodząca"
-    const PRE_BREAK_HIGHLIGHT_MINUTES = 10; 
+// Mapowanie skrótów dni na numery używane przez JavaScript (0-niedziela, 1-poniedziałek, etc.)
+const dayMap = { "pon.": 1, "wt.": 2, "śr.": 3, "czw.": 4, "pt.": 5 };
 
-    /**
-     * Generuje tabelę z harmonogramem dyżurów dla bieżącego dnia.
-     */
-    function generateScheduleForToday() {
-        const now = new Date();
-        const dayName = now.toLocaleString('pl-PL', { weekday: 'long' }).toLowerCase();
-        const schedule = dailySchedules[dayName];
-        
-        const capitalizedDayName = dayName.charAt(0).toUpperCase() + dayName.slice(1);
-        titleElement.textContent = `Harmonogram dyżurów - ${capitalizedDayName}`;
+function updateSchedule() {
+    const now = new Date();
+    const currentDay = now.getDay();
+    const currentTime = now.getHours() * 60 + now.getMinutes(); // Czas w minutach od północy
 
-        if (!schedule || !tableElement) {
-            titleElement.textContent = "Dzisiaj brak dyżurów";
-            if(tableElement) tableElement.innerHTML = '';
-            return;
+    // Ustawienie daty w nagłówku
+    document.getElementById('header-date').innerText = `Dyżury na dzień: ${now.toLocaleDateString('pl-PL')}`;
+
+    // Filtrowanie dyżurów tylko dla dzisiejszego dnia
+    const todaySchedule = scheduleData.filter(duty => dayMap[duty.day] === currentDay);
+
+    // Znajdowanie przerwy do podświetlenia
+    let highlightIndex = -1;
+    let nextBreakIndex = -1;
+    let foundNextBreak = false;
+
+    for (let i = 0; i < todaySchedule.length; i++) {
+        const [startTimeStr, endTimeStr] = todaySchedule[i].time.split('-');
+        const [startHour, startMinute] = startTimeStr.split(':').map(Number);
+        const [endHour, endMinute] = endTimeStr.split(':').map(Number);
+        const startTime = startHour * 60 + startMinute;
+        const endTime = endHour * 60 + endMinute;
+
+        // Sprawdź, czy przerwa właśnie trwa
+        if (currentTime >= startTime && currentTime < endTime) {
+            highlightIndex = i;
+            break;
         }
 
-        tableElement.innerHTML = '';
-
-        const thead = document.createElement('thead');
-        let headerRowHTML = '<tr><th>Przerwa</th>';
-        locations.forEach(location => {
-            headerRowHTML += `<th class="location-header" style="background-color: ${location.color};">${location.name}</th>`;
-        });
-        headerRowHTML += '</tr>';
-        thead.innerHTML = headerRowHTML;
-        tableElement.appendChild(thead);
-
-        const tbody = document.createElement('tbody');
-        breaks.forEach((breakName, breakIndex) => {
-            const row = document.createElement('tr');
-            row.id = `break-${breakIndex}`;
-            
-            row.innerHTML = `<td class="break-name">${breakName}</td>`;
-
-            const teachersOnBreak = schedule[breakIndex] || [];
-            locations.forEach((_, locationIndex) => {
-                const teacherName = teachersOnBreak[locationIndex] || '';
-                // Użycie innerHTML pozwala na obsługę tagu <br>
-                row.innerHTML += `<td>${teacherName}</td>`;
-            });
-            // POPRAWIONA LINIA: Dodajemy 'row' (wiersz) zamiast 'tbody'
-            tbody.appendChild(row);
-        });
-        tableElement.appendChild(tbody);
+        // Jeśli nie, znajdź pierwszą nadchodzącą przerwę
+        if (currentTime < startTime && !foundNextBreak) {
+            nextBreakIndex = i;
+            foundNextBreak = true;
+        }
+    }
+    
+    // Jeśli żadna przerwa nie trwa, użyj najbliższej nadchodzącej
+    if (highlightIndex === -1 && nextBreakIndex !== -1) {
+        highlightIndex = nextBreakIndex;
     }
 
-    /**
-     * Podświetla wiersz z przerwą, która aktualnie trwa lub wkrótce się rozpocznie.
-     */
-    function highlightCurrentAndUpcomingBreak() {
-        const now = new Date();
-        const dayName = now.toLocaleString('pl-PL', { weekday: 'long' }).toLowerCase();
+    // Wyświetlanie dyżurów w tabeli
+    const tableBody = document.getElementById('schedule-body');
+    tableBody.innerHTML = ''; // Czyszczenie tabeli przed dodaniem nowych danych
 
-        if (!dailySchedules[dayName]) return;
-        
-        document.querySelectorAll('#duty-table tr').forEach(row => {
-            row.classList.remove('current-break-row', 'upcoming-break-row');
-        });
+    todaySchedule.forEach((duty, index) => {
+        const row = document.createElement('tr');
+        if (index === highlightIndex) {
+            row.classList.add('highlight');
+        }
+        row.innerHTML = `
+            <td>${duty.time}</td>
+            <td>${duty.location}</td>
+            <td>${duty.teacher}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
 
-        breaks.forEach((breakName, breakIndex) => {
-            const timeMatch = breakName.match(/(\d{1,2}:\d{2})-(\d{1,2}:\d{2})/);
-            if (!timeMatch) return;
-
-            const [_, startTimeStr, endTimeStr] = timeMatch;
-            
-            const start = new Date(now);
-            const [startHours, startMinutes] = startTimeStr.split(':');
-            start.setHours(parseInt(startHours), parseInt(startMinutes), 0, 0);
-
-            const end = new Date(now);
-            const [endHours, endMinutes] = endTimeStr.split(':');
-            end.setHours(parseInt(endHours), parseInt(endMinutes), 0, 0);
-            
-            const preBreakTime = new Date(start.getTime() - PRE_BREAK_HIGHLIGHT_MINUTES * 60000);
-
-            const row = document.getElementById(`break-${breakIndex}`);
-            if (!row) return;
-
-            if (now >= start && now <= end) {
-                row.classList.add('current-break-row');
-            } else if (now >= preBreakTime && now < start) {
-                row.classList.add('upcoming-break-row');
-            }
-        });
-    }
-
-    generateScheduleForToday();
-    highlightCurrentAndUpcomingBreak();
-    setInterval(highlightCurrentAndUpcomingBreak, 60000); 
-});
-
+// Uruchom funkcję od razu po załadowaniu strony, a potem odświeżaj co minutę
+updateSchedule();
+setInterval(updateSchedule, 60000); // 60000 milisekund = 1 minuta
