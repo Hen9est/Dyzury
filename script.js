@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Sprawdzenie, czy dane dyżurów są dostępne
     if (typeof dutyScheduleData === 'undefined') {
         console.error("Błąd: Nie znaleziono danych w pliku data.js!");
+        document.getElementById('main-title').textContent = "Błąd ładowania danych!";
         return;
     }
 
@@ -17,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function generateScheduleForToday() {
         const now = new Date();
-        const dayName = now.toLocaleDateString('pl-PL', { weekday: 'long' }).toLowerCase();
+        const dayName = now.toLocaleString('pl-PL', { weekday: 'long' }).toLowerCase();
         const schedule = dailySchedules[dayName];
         
         const capitalizedDayName = dayName.charAt(0).toUpperCase() + dayName.slice(1);
@@ -25,14 +26,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (!schedule || !tableElement) {
             titleElement.textContent = "Dzisiaj brak dyżurów";
-            if(tableElement) tableElement.innerHTML = ''; // Czyści tabelę, jeśli istnieje
+            if(tableElement) tableElement.innerHTML = '';
             return;
         }
 
-        // 1. Czyszczenie istniejącej zawartości tabeli
         tableElement.innerHTML = '';
 
-        // 2. Tworzenie nagłówka tabeli (thead) z nazwami lokalizacji
         const thead = document.createElement('thead');
         let headerRowHTML = '<tr><th>Przerwa</th>';
         locations.forEach(location => {
@@ -42,20 +41,20 @@ document.addEventListener('DOMContentLoaded', function() {
         thead.innerHTML = headerRowHTML;
         tableElement.appendChild(thead);
 
-        // 3. Tworzenie ciała tabeli (tbody) z dyżurami
         const tbody = document.createElement('tbody');
         breaks.forEach((breakName, breakIndex) => {
             const row = document.createElement('tr');
-            row.id = `break-${breakIndex}`; // Unikalne ID dla każdego wiersza
+            row.id = `break-${breakIndex}`;
             
             row.innerHTML = `<td class="break-name">${breakName}</td>`;
 
             const teachersOnBreak = schedule[breakIndex] || [];
             locations.forEach((_, locationIndex) => {
                 const teacherName = teachersOnBreak[locationIndex] || '';
+                // Użycie innerHTML pozwala na obsługę tagu <br>
                 row.innerHTML += `<td>${teacherName}</td>`;
             });
-            tbody.appendChild(row);
+            tbody.appendChild(tbody);
         });
         tableElement.appendChild(tbody);
     }
@@ -65,11 +64,10 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function highlightCurrentAndUpcomingBreak() {
         const now = new Date();
-        const dayName = now.toLocaleDateString('pl-PL', { weekday: 'long' }).toLowerCase();
+        const dayName = now.toLocaleString('pl-PL', { weekday: 'long' }).toLowerCase();
 
-        if (!dailySchedules[dayName]) return; // Nie wykonuj w weekendy
+        if (!dailySchedules[dayName]) return;
         
-        // Usuwa wszystkie istniejące podświetlenia, aby uniknąć duplikatów
         document.querySelectorAll('#duty-table tr').forEach(row => {
             row.classList.remove('current-break-row', 'upcoming-break-row');
         });
@@ -93,18 +91,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const row = document.getElementById(`break-${breakIndex}`);
             if (!row) return;
 
-            // Sprawdza czas i dodaje odpowiednią klasę CSS do wiersza
             if (now >= start && now <= end) {
-                row.classList.add('current-break-row'); // Przerwa trwa
+                row.classList.add('current-break-row');
             } else if (now >= preBreakTime && now < start) {
-                row.classList.add('upcoming-break-row'); // Przerwa nadchodzi
+                row.classList.add('upcoming-break-row');
             }
         });
     }
 
-    // Uruchomienie funkcji po załadowaniu strony
     generateScheduleForToday();
     highlightCurrentAndUpcomingBreak();
-    // Ustawienie interwału na odświeżanie podświetlenia co minutę
     setInterval(highlightCurrentAndUpcomingBreak, 60000); 
 });
+
