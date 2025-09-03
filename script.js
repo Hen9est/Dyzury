@@ -54,7 +54,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Użycie innerHTML pozwala na obsługę tagu <br>
                 row.innerHTML += `<td>${teacherName}</td>`;
             });
-            tbody.appendChild(tbody);
+            // POPRAWIONA LINIA: Dodajemy 'row' (wiersz) zamiast 'tbody'
+            tbody.appendChild(row);
         });
         tableElement.appendChild(tbody);
     }
