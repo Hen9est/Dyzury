@@ -1,5 +1,3 @@
-// script.js - Logika do generowania wszystkich tabel dyżurów
-
 document.addEventListener('DOMContentLoaded', function() {
     // Sprawdzenie, czy dane dyżurów są dostępne
     if (typeof dutyScheduleData === 'undefined') {
@@ -8,21 +6,33 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     const { breaks, locations, dailySchedules } = dutyScheduleData;
-    const daysOfWeek = ["poniedziałek", "wtorek", "środa", "czwartek", "piątek"];
+    const tableElement = document.getElementById('duty-table');
+    const titleElement = document.getElementById('main-title');
+    
+    // Ustawia, ile minut przed przerwą ma się ona podświetlić jako "nadchodząca"
+    const PRE_BREAK_HIGHLIGHT_MINUTES = 10; 
 
     /**
-     * Generuje kompletną tabelę HTML dla określonego dnia tygodnia.
-     * @param {string} dayName - Nazwa dnia (np. "poniedziałek").
+     * Generuje tabelę z harmonogramem dyżurów dla bieżącego dnia.
      */
-    function generateTableForDay(dayName) {
+    function generateScheduleForToday() {
+        const now = new Date();
+        const dayName = now.toLocaleDateString('pl-PL', { weekday: 'long' }).toLowerCase();
         const schedule = dailySchedules[dayName];
-        if (!schedule) return; // Pomiń, jeśli brak danych dla tego dnia
+        
+        const capitalizedDayName = dayName.charAt(0).toUpperCase() + dayName.slice(1);
+        titleElement.textContent = `Harmonogram dyżurów - ${capitalizedDayName}`;
 
-        const tableId = `table-${dayName}`;
-        const tableElement = document.getElementById(tableId);
-        if (!tableElement) return; // Pomiń, jeśli nie znaleziono elementu tabeli w HTML
+        if (!schedule || !tableElement) {
+            titleElement.textContent = "Dzisiaj brak dyżurów";
+            if(tableElement) tableElement.innerHTML = ''; // Czyści tabelę, jeśli istnieje
+            return;
+        }
 
-        // 1. Tworzenie nagłówka tabeli (thead) z nazwami lokalizacji
+        // 1. Czyszczenie istniejącej zawartości tabeli
+        tableElement.innerHTML = '';
+
+        // 2. Tworzenie nagłówka tabeli (thead) z nazwami lokalizacji
         const thead = document.createElement('thead');
         let headerRowHTML = '<tr><th>Przerwa</th>';
         locations.forEach(location => {
@@ -32,20 +42,16 @@ document.addEventListener('DOMContentLoaded', function() {
         thead.innerHTML = headerRowHTML;
         tableElement.appendChild(thead);
 
-        // 2. Tworzenie ciała tabeli (tbody) z dyżurami
+        // 3. Tworzenie ciała tabeli (tbody) z dyżurami
         const tbody = document.createElement('tbody');
         breaks.forEach((breakName, breakIndex) => {
             const row = document.createElement('tr');
-            // Unikalne ID dla każdego wiersza, np. "poniedziałek-break-0"
-            row.id = `${dayName}-break-${breakIndex}`; 
+            row.id = `break-${breakIndex}`; // Unikalne ID dla każdego wiersza
             
-            // Komórka z nazwą przerwy
             row.innerHTML = `<td class="break-name">${breakName}</td>`;
 
-            // Komórki z nazwiskami nauczycieli
             const teachersOnBreak = schedule[breakIndex] || [];
             locations.forEach((_, locationIndex) => {
-                // Użycie `innerHTML` pozwala na interpretację tagu <br> dla dwóch nauczycieli
                 const teacherName = teachersOnBreak[locationIndex] || '';
                 row.innerHTML += `<td>${teacherName}</td>`;
             });
@@ -54,22 +60,19 @@ document.addEventListener('DOMContentLoaded', function() {
         tableElement.appendChild(tbody);
     }
 
-    // Pętla generująca tabele dla wszystkich dni roboczych
-    daysOfWeek.forEach(day => {
-        generateTableForDay(day);
-    });
-    
     /**
-     * Podświetla wiersz w tabeli odpowiadający aktualnie trwającej przerwie.
+     * Podświetla wiersz z przerwą, która aktualnie trwa lub wkrótce się rozpocznie.
      */
-    function highlightCurrentBreak() {
+    function highlightCurrentAndUpcomingBreak() {
         const now = new Date();
-        const currentDayName = now.toLocaleDateString('pl-PL', { weekday: 'long' }).toLowerCase();
+        const dayName = now.toLocaleDateString('pl-PL', { weekday: 'long' }).toLowerCase();
+
+        if (!dailySchedules[dayName]) return; // Nie wykonuj w weekendy
         
-        // Funkcja działa tylko w dni robocze
-        if (!daysOfWeek.includes(currentDayName)) {
-            return;
-        }
+        // Usuwa wszystkie istniejące podświetlenia, aby uniknąć duplikatów
+        document.querySelectorAll('#duty-table tr').forEach(row => {
+            row.classList.remove('current-break-row', 'upcoming-break-row');
+        });
 
         breaks.forEach((breakName, breakIndex) => {
             const timeMatch = breakName.match(/(\d{1,2}:\d{2})-(\d{1,2}:\d{2})/);
@@ -84,22 +87,24 @@ document.addEventListener('DOMContentLoaded', function() {
             const end = new Date(now);
             const [endHours, endMinutes] = endTimeStr.split(':');
             end.setHours(parseInt(endHours), parseInt(endMinutes), 0, 0);
+            
+            const preBreakTime = new Date(start.getTime() - PRE_BREAK_HIGHLIGHT_MINUTES * 60000);
 
-            const rowId = `${currentDayName}-break-${breakIndex}`;
-            const row = document.getElementById(rowId);
+            const row = document.getElementById(`break-${breakIndex}`);
             if (!row) return;
 
-            // Najpierw usuń podświetlenie, aby uniknąć duplikatów
-            row.classList.remove('current-break-row');
-
-            // Jeśli aktualny czas jest w trakcie przerwy, dodaj podświetlenie
+            // Sprawdza czas i dodaje odpowiednią klasę CSS do wiersza
             if (now >= start && now <= end) {
-                row.classList.add('current-break-row');
+                row.classList.add('current-break-row'); // Przerwa trwa
+            } else if (now >= preBreakTime && now < start) {
+                row.classList.add('upcoming-break-row'); // Przerwa nadchodzi
             }
         });
     }
 
-    // Uruchom podświetlanie od razu i ustaw odświeżanie co minutę
-    highlightCurrentBreak();
-    setInterval(highlightCurrentBreak, 60000);
+    // Uruchomienie funkcji po załadowaniu strony
+    generateScheduleForToday();
+    highlightCurrentAndUpcomingBreak();
+    // Ustawienie interwału na odświeżanie podświetlenia co minutę
+    setInterval(highlightCurrentAndUpcomingBreak, 60000); 
 });
