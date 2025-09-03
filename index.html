@@ -9,17 +9,21 @@
 <body>
     <div class="container">
         <h1 id="header-date">Ładowanie daty...</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th>Przerwa</th>
-                    <th>Miejsce</th>
-                    <th>Nauczyciel</th>
-                </tr>
-            </thead>
-            <tbody id="schedule-body">
+        <!-- Ten nowy div jest ważny dla przewijania! -->
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Przerwa</th>
+                        <th>Miejsce</th>
+                        <th>Nauczyciel</th>
+                    </tr>
+                </thead>
+                <tbody id="schedule-body">
+                    <!-- Dyżury na dzisiaj pojawią się tutaj -->
                 </tbody>
-        </table>
+            </table>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
