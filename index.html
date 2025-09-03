@@ -3,386 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rozkład Dyżurów - Szkoła</title>
+    <title>Tygodniowy Harmonogram Dyżurów</title>
+    <link rel="stylesheet" href="style.css">
     <style>
-        /* Uniwersalny reset marginesów i paddingu */
-        * {
-            margin: 0;
-            padding: 0;
-        }
-
-        /* style.css - Arkusz stylów dla wyglądu strony */
+        /* Dodatkowe style, aby wyświetlić wszystkie tabele i umożliwić przewijanie */
         html, body {
-            width: 640px; /* Ustawienie stałej szerokości strony */
-            height: 600px; /* Ustawienie stałej wysokości strony do 600px */
-            margin: 0 auto; /* Wyśrodkowanie strony w poziomie */
-            box-sizing: border-box; /* Model pudełkowy uwzględniający padding i border w rozmiarze */
-            overflow: hidden; /* Zapobiega pojawianiu się pasków przewijania */
+            width: auto; /* Zmiana szerokości na automatyczną */
+            height: auto; /* Zmiana wysokości na automatyczną */
+            overflow: auto; /* Włączenie pasków przewijania w razie potrzeby */
+            margin: 0;
+            padding: 20px; /* Dodanie marginesu dla lepszego wyglądu */
         }
-
-        body {
-            font-family: 'Arial', sans-serif; /* Zachowanie czcionki Arial dla czytelności */
-            background-color: #f0f0f0;
-            color: #333;
-            /* Ustawienie paddingu: 0px góra, 0px prawo, 100px dół, 0px lewo */
-            padding: 0px 0px 100px 0px; /* Minimalne marginesy boczne, tylko 100px na dole */
-            display: flex;
-            /* Usunięto justify-content: center, ponieważ body ma teraz stałą szerokość i jest wyśrodkowane przez margin: auto */
-            align-items: flex-start; /* Wyrównanie zawartości do góry */
-            width: 640px; /* Jawne ustawienie szerokości body */
-            height: 600px; /* Jawne ustawienie wysokości body */
-        }
-
         .container {
-            width: 100%; /* Kontener zajmuje całą dostępną szerokość body (640px) */
-            height: 460px; /* Ustawienie stałej wysokości kontenera treści na 460px */
-            background-color: #ffffff;
-            border-radius: 8px; /* Nieznacznie mniejsze zaokrąglenia */
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); /* Delikatniejszy cień */
-            padding: 0px; /* Zmniejszony padding wewnątrz kontenera */
-            text-align: center;
-            display: flex; /* Użycie flexbox dla lepszego rozmieszczenia tytułu i tabeli */
-            flex-direction: column;
-            /* Usunięto overflow: hidden, aby nie ukrywać zawartości, gdy wysokość jest kontrolowana */
+            width: 95%;
+            max-width: 1200px; /* Ograniczenie maksymalnej szerokości */
+            height: auto;
+            margin: 0 auto;
+            padding: 20px;
         }
-
+        .day-schedule {
+            margin-bottom: 40px; /* Zwiększony odstęp między tabelami dni */
+        }
         #main-title {
-            font-size: 1em; /* Zmniejszona czcionka dla tytułu */
+            font-size: 2em;
+            margin-bottom: 25px;
+        }
+        h2 {
+            text-align: left;
+            margin-left: 10px;
             color: #2c3e50;
-            margin-bottom: 0px; /* Usunięty margines, aby zaoszczędzić miejsce */
-            padding-top: 5px; /* Minimalny padding */
-            padding-bottom: 5px; /* Dodatkowy padding dolny, aby zdefiniować wysokość */
-            text-transform: uppercase;
-            font-weight: bold;
-            letter-spacing: 0.05em;
-            height: 35px; /* Jawna wysokość dla tytułu */
-            line-height: 25px; /* Dostosowana wysokość linii, aby zmieścić tekst */
-        }
-
-        table {
-            width: 100%;
-            height: calc(100% - 35px); /* Tabela zajmuje pozostałą wysokość kontenera (460px - 35px tytułu) */
-            border-collapse: collapse;
-            margin-top: 0; /* Usunięty górny margines, aby tabela była bliżej tytułu */
-            flex-grow: 1; /* Tabela rozciąga się, aby wypełnić dostępną przestrzeń */
-            table-layout: fixed; /* Ustawienie stałego układu tabeli dla lepszej kontroli szerokości kolumn */
-        }
-
-        thead {
-            height: 40px; /* Stała wysokość dla nagłówka tabeli */
-        }
-
-        tbody {
-            height: calc(100% - 40px); /* Pozostała wysokość dla ciała tabeli */
-            display: table-row-group; /* Upewnia się, że tbody zachowuje się jak grupa wierszy tabeli */
-        }
-
-        tbody tr {
-            height: calc(100% / 8); /* Rozkłada wysokość równomiernie na 8 wierszy danych */
-        }
-
-        th, td {
-            border: 1px solid #ccc; /* Delikatniejsza ramka dla efektu "rozkładu jazdy" */
-            padding: 0px; /* Zmniejszony padding w komórkach do 0 */
-            text-align: center;
-            font-size: 0.5em; /* Zmniejszona czcionka dla nazwisk i przerw */
-            vertical-align: middle;
-            line-height: 1; /* Zmniejszona wysokość linii do 1 */
-            word-wrap: break-word; /* Zapewnia łamanie długich słów */
-            height: 100%; /* Komórki wypełniają wysokość wiersza */
-        }
-
-        thead th {
-            background-color: #e0e0e0;
-            color: #333;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 0.45em; /* Zmniejszona czcionka dla nagłówków kolumn */
-            padding: 1px; /* Minimalny padding dla nagłówków */
-        }
-
-        .location-header {
-            color: white; /* Biały tekst na kolorowym tle korytarzy */
-            border: 1px solid #777; /* Delikatna ramka dla lepszego kontrastu */
-        }
-
-        .break-name {
-            background-color: #f2f2f2;
-            font-weight: bold;
-            font-size: 0.5em; /* Zmniejszona czcionka dla nazw przerw */
-            color: #555;
-        }
-
-        /* Szerokość kolumny z przerwami */
-        th:first-child, td:first-child {
-            width: 20%; /* Zwiększona szerokość dla nazw przerw */
-        }
-
-        /* Styl dla aktualnie trwającej przerwy (wraz z 10-minutowym wyprzedzeniem) */
-        .current-break-row {
-            font-weight: bold; /* Pogrubienie tekstu */
-            background-color: #e6ffe6; /* Jasnozielone tło dla wyróżnienia */
-            border: 2px solid #4CAF50; /* Wyraźniejsza zielona ramka */
-        }
-
-        /* Nowy styl dla aktywnej lekcji (pogrubione linie) */
-        .lesson-active-row {
-            font-weight: normal; /* Tekst nie jest pogrubiony */
-            background-color: #f5f5f5; /* Subtelne jasnoszare tło */
-            border: 2px solid #607D8B; /* Pogrubiona, szaro-niebieska ramka */
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Nagłówek strony z dynamicznym dniem tygodnia, bez daty -->
-        <h1 id="main-title">ROZKŁAD DYŻURÓW - <span id="currentDay"></span></h1>
-
-        <div id="duty-table-container">
-            <!-- Tabela dyżurów zostanie wygenerowana tutaj przez JavaScript -->
+        <h1 id="main-title">Tygodniowy Harmonogram Dyżurów</h1>
+        
+        <!-- Sekcja dla Poniedziałku -->
+        <div id="poniedzialek-schedule" class="day-schedule">
+            <h2>Poniedziałek</h2>
+            <table id="table-poniedziałek"></table>
         </div>
+        
+        <!-- Sekcja dla Wtorku -->
+        <div id="wtorek-schedule" class="day-schedule">
+            <h2>Wtorek</h2>
+            <table id="table-wtorek"></table>
+        </div>
+
+        <!-- Sekcja dla Środy -->
+        <div id="sroda-schedule" class="day-schedule">
+            <h2>Środa</h2>
+            <table id="table-środa"></table>
+        </div>
+
+        <!-- Sekcja dla Czwartku -->
+        <div id="czwartek-schedule" class="day-schedule">
+            <h2>Czwartek</h2>
+            <table id="table-czwartek"></table>
+        </div>
+
+        <!-- Sekcja dla Piątku -->
+        <div id="piatek-schedule" class="day-schedule">
+            <h2>Piątek</h2>
+            <table id="table-piątek"></table>
+        </div>
+
     </div>
 
-    <script>
-        // data.js - Dane dyżurów
-        const dutyScheduleData = {
-            // Lista przerw w ciągu dnia (niezmienna dla wszystkich dni)
-            breaks: [
-                "P1 (8:45-8:55)",
-                "P2 (9:40-9:50)",
-                "P3 (10:35-10:45)",
-                "P4 (11:30-11:40)",
-                "P5 (12:25-12:35)",
-                "P6 (13:20-13:30)",
-                "P7 (14:15-14:25)",
-                "P8 (15:10-15:20)"
-            ],
-
-            // Lista miejsc dyżurów wraz z przypisanymi kolorami (niezmienna dla wszystkich dni)
-            locations: [
-                { name: "Zielony", color: "#6EB446" },
-                { name: "Fioletowy", color: "#965AB4" },
-                { name: "Pomarańczowy", color: "#FF9933" },
-                { name: "Underground", "color": "#646464" },
-                { name: "Żółty", color: "#FFE646" },
-                { name: "Czerwony", color: "#C83232" },
-                { name: "Niebieski", color: "#4682C8" },
-                { name: "Parter", color: "#DCDCDC" },
-                { name: "Obiad", color: "#FFC899" }
-            ],
-
-            // Rozkłady dyżurów dla poszczególnych dni tygodnia
-            // Nazwy dni tygodnia muszą być małą literą, zgodnie z toLocaleDateString('pl-PL')
-            dailySchedules: {
-                "poniedziałek": [
-                    // Przerwa 1
-                    ["Kowalski", "Nowak", "Lewandowski<br>Nauczyciel A", "Sikora", "Zielińska", "Wójcik", "Mazur", "Krawczyk", "Lis"],
-                    // Przerwa 2
-                    ["Bąk", "Kaczmarek", "Piotrowska<br>Nauczyciel B", "Zając", "Duda", "Kołodziej", "Kowalczyk", "Górecki", "Olszewski"],
-                    // Przerwa 3
-                    ["Stasiak", "Jankowski", "Woźniak<br>Nauczyciel C", "Grabowski", "Adamski", "Majewska", "Pająk", "Szymański", "Włodarczyk"],
-                    // Przerwa 4
-                    ["Walczak", "Kruk", "Pietrzak<br>Nauczyciel D", "Nowicka", "Pawlak", "Michalski", "Baran", "Rutkowski", "Kwiecień"],
-                    // Przerwa 5
-                    ["Marciniak", "Wróbel", "Czarnecka<br>Nauczyciel E", "Mazurek", "Kozłowski", "Sawicki", "Jaworski", "Borkowski", "Wojciechowski"],
-                    // Przerwa 6
-                    ["Błaszczyk", "Dąbrowska", "Ziółkowski<br>Nauczyciel F", "Sobczak", "Urban", "Gajewski", "Kubiak", "Kamińska", "Rybak"],
-                    // Przerwa 7
-                    ["Ostrowski", "Szczepański", "Kowal<br>Nauczyciel G", "Mucha", "Wysocki", "Kaczmarczyk", "Jasiński", "Głowacki", "Drozd"],
-                    // Przerwa 8
-                    ["Kozak", "Lisowski", "Sadowska<br>Nauczyciel H", "Piasecki", "Cieślak", "Wesołowski", "Grzelak", "Król", "Zieliński"]
-                ],
-                "wtorek": [
-                    // PRZERWA 1 (Wtorek)
-                    ["Nauczyciel WT1", "Nauczyciel WT2", "Nauczyciel WT3<br>Nauczyciel WT3a", "Nauczyciel WT4", "Nauczyciel WT5", "Nauczyciel WT6", "Nauczyciel WT7", "Nauczyciel WT8", "Nauczyciel WT9"],
-                    // PRZERWA 2 (Wtorek)
-                    ["Nauczyciel WT10", "Nauczyciel WT11", "Nauczyciel WT12<br>Nauczyciel WT12a", "Nauczyciel WT13", "Nauczyciel WT14", "Nauczyciel WT15", "Nauczyciel WT16", "Nauczyciel WT17", "Nauczyciel WT18"],
-                    // PRZERWA 3 (Wtorek)
-                    ["Nauczyciel WT19", "Nauczyciel WT20", "Nauczyciel WT21<br>Nauczyciel WT21a", "Nauczyciel WT22", "Nauczyciel WT23", "Nauczyciel WT24", "Nauczyciel WT25", "Nauczyciel WT26", "Nauczyciel WT27"],
-                    // PRZERWA 4 (Wtorek)
-                    ["Nauczyciel WT28", "Nauczyciel WT29", "Nauczyciel WT30<br>Nauczyciel WT30a", "Nauczyciel WT31", "Nauczyciel WT32", "Nauczyciel WT33", "Nauczyciel WT34", "Nauczyciel WT35", "Nauczyciel WT36"],
-                    // PRZERWA 5 (Wtorek)
-                    ["Nauczyciel WT37", "Nauczyciel WT38", "Nauczyciel WT39<br>Nauczyciel WT39a", "Nauczyciel WT40", "Nauczyciel WT41", "Nauczyciel WT42", "Nauczyciel WT43", "Nauczyciel WT44", "Nauczyciel WT45"],
-                    // PRZERWA 6 (Wtorek)
-                    ["Nauczyciel WT46", "Nauczyciel WT47", "Nauczyciel WT48<br>Nauczyciel WT48a", "Nauczyciel WT49", "Nauczyciel WT50", "Nauczyciel WT51", "Nauczyciel WT52", "Nauczyciel WT53", "Nauczyciel WT54"],
-                    // PRZERWA 7 (Wtorek)
-                    ["Nauczyciel WT55", "Nauczyciel WT56", "Nauczyciel WT57<br>Nauczyciel WT57a", "Nauczyciel WT58", "Nauczyciel WT59", "Nauczyciel WT60", "Nauczyciel WT61", "Nauczyciel WT62", "Nauczyciel WT63"],
-                    // PRZERWA 8 (Wtorek)
-                    ["Nauczyciel WT64", "Nauczyciel WT65", "Nauczyciel WT66<br>Nauczyciel WT66a", "Nauczyciel WT67", "Nauczyciel WT68", "Nauczyciel WT69", "Nauczyciel WT70", "Nauczyciel WT71", "Nauczyciel WT72"]
-                ],
-                "środa": [
-                    // PRZERWA 1 (Środa)
-                    ["Nauczyciel SR1", "Nauczyciel SR2", "Nauczyciel SR3<br>Nauczyciel SR3a", "Nauczyciel SR4", "Nauczyciel SR5", "Nauczyciel SR6", "Nauczyciel SR7", "Nauczyciel SR8", "Nauczyciel SR9"],
-                    // PRZERWA 2 (Środa)
-                    ["Nauczyciel SR10", "Nauczyciel SR11", "Nauczyciel SR12<br>Nauczyciel SR12a", "Nauczyciel SR13", "Nauczyciel SR14", "Nauczyciel SR15", "Nauczyciel SR16", "Nauczyciel SR17", "Nauczyciel SR18"],
-                    // PRZERWA 3 (Środa)
-                    ["Nauczyciel SR19", "Nauczyciel SR20", "Nauczyciel SR21<br>Nauczyciel SR21a", "Nauczyciel SR22", "Nauczyciel SR23", "Nauczyciel SR24", "Nauczyciel SR25", "Nauczyciel SR26", "Nauczyciel SR27"],
-                    // PRZERWA 4 (Środa)
-                    ["Nauczyciel SR28", "Nauczyciel SR29", "Nauczyciel SR30<br>Nauczyciel SR30a", "Nauczyciel SR31", "Nauczyciel SR32", "Nauczyciel SR33", "Nauczyciel SR34", "Nauczyciel SR35", "Nauczyciel SR36"],
-                    // PRZERWA 5 (Środa)
-                    ["Nauczyciel SR37", "Nauczyciel SR38", "Nauczyciel SR39<br>Nauczyciel SR39a", "Nauczyciel SR40", "Nauczyciel SR41", "Nauczyciel SR42", "Nauczyciel SR43", "Nauczyciel SR44", "Nauczyciel SR45"],
-                    // PRZERWA 6 (Środa)
-                    ["Nauczyciel SR46", "Nauczyciel SR47", "Nauczyciel SR48<br>Nauczyciel SR48a", "Nauczyciel SR49", "Nauczyciel SR50", "Nauczyciel SR51", "Nauczyciel SR52", "Nauczyciel SR53", "Nauczyciel SR54"],
-                    // PRZERWA 7 (Środa)
-                    ["Nauczyciel SR55", "Nauczyciel SR56", "Nauczyciel SR57<br>Nauczyciel SR57a", "Nauczyciel SR58", "Nauczyciel SR59", "Nauczyciel SR60", "Nauczyciel SR61", "Nauczyciel SR62", "Nauczyciel SR63"],
-                    // PRZERWA 8 (Środa)
-                    ["Nauczyciel SR64", "Nauczyciel SR65", "Nauczyciel SR66<br>Nauczyciel SR66a", "Nauczyciel SR67", "Nauczyciel SR68", "Nauczyciel SR69", "Nauczyciel SR70", "Nauczyciel SR71", "Nauczyciel SR72"]
-                ],
-                "czwartek": [
-                    // PRZERWA 1 (Czwartek)
-                    ["Nauczyciel CZ1", "Nauczyciel CZ2", "Nauczyciel CZ3<br>Nauczyciel CZ3a", "Nauczyciel CZ4", "Nauczyciel CZ5", "Nauczyciel CZ6", "Nauczyciel CZ7", "Nauczyciel CZ8", "Nauczyciel CZ9"],
-                    // PRZERWA 2 (Czwartek)
-                    ["Nauczyciel CZ10", "Nauczyciel CZ11", "Nauczyciel CZ12<br>Nauczyciel CZ12a", "Nauczyciel CZ13", "Nauczyciel CZ14", "Nauczyciel CZ15", "Nauczyciel CZ16", "Nauczyciel CZ17", "Nauczyciel CZ18"],
-                    // PRZERWA 3 (Czwartek)
-                    ["Nauczyciel CZ19", "Nauczyciel CZ20", "Nauczyciel CZ21<br>Nauczyciel CZ21a", "Nauczyciel CZ22", "Nauczyciel CZ23", "Nauczyciel CZ24", "Nauczyciel CZ25", "Nauczyciel CZ26", "Nauczyciel CZ27"],
-                    // PRZERWA 4 (Czwartek)
-                    ["Nauczyciel CZ28", "Nauczyciel CZ29", "Nauczyciel CZ30<br>Nauczyciel CZ30a", "Nauczyciel CZ31", "Nauczyciel CZ32", "Nauczyciel CZ33", "Nauczyciel CZ34", "Nauczyciel CZ35", "Nauczyciel CZ36"],
-                    // PRZERWA 5 (Czwartek)
-                    ["Nauczyciel CZ37", "Nauczyciel CZ38", "Nauczyciel CZ39<br>Nauczyciel CZ39a", "Nauczyciel CZ40", "Nauczyciel CZ41", "Nauczyciel CZ42", "Nauczyciel CZ43", "Nauczyciel CZ44", "Nauczyciel CZ45"],
-                    // PRZERWA 6 (Czwartek)
-                    ["Nauczyciel CZ46", "Nauczyciel CZ47", "Nauczyciel CZ48<br>Nauczyciel CZ48a", "Nauczyciel CZ49", "Nauczyciel CZ50", "Nauczyciel CZ51", "Nauczyciel CZ52", "Nauczyciel CZ53", "Nauczyciel CZ54"],
-                    // PRZERWA 7 (Czwartek)
-                    ["Nauczyciel CZ55", "Nauczyciel CZ56", "Nauczyciel CZ57<br>Nauczyciel CZ57a", "Nauczyciel CZ58", "Nauczyciel CZ59", "Nauczyciel CZ60", "Nauczyciel CZ61", "Nauczyciel CZ62", "Nauczyciel CZ63"],
-                    // PRZERWA 8 (Czwartek)
-                    ["Nauczyciel CZ64", "Nauczyciel CZ65", "Nauczyciel CZ66<br>Nauczyciel CZ66a", "Nauczyciel CZ67", "Nauczyciel CZ68", "Nauczyciel CZ69", "Nauczyciel CZ70", "Nauczyciel CZ71", "Nauczyciel CZ72"]
-                ],
-                "piątek": [
-                    // PRZERWA 1 (Piątek)
-                    ["Nauczyciel PT1", "Nauczyciel PT2", "Nauczyciel PT3<br>Nauczyciel PT3a", "Nauczyciel PT4", "Nauczyciel PT5", "Nauczyciel PT6", "Nauczyciel PT7", "Nauczyciel PT8", "Nauczyciel PT9"],
-                    // PRZERWA 2 (Piątek)
-                    ["Nauczyciel PT10", "Nauczyciel PT11", "Nauczyciel PT12<br>Nauczyciel PT12a", "Nauczyciel PT13", "Nauczyciel PT14", "Nauczyciel PT15", "Nauczyciel PT16", "Nauczyciel PT17", "Nauczyciel PT18"],
-                    // PRZERWA 3 (Piątek)
-                    ["Nauczyciel PT19", "Nauczyciel PT20", "Nauczyciel PT21<br>Nauczyciel PT21a", "Nauczyciel PT22", "Nauczyciel PT23", "Nauczyciel PT24", "Nauczyciel PT25", "Nauczyciel PT26", "Nauczyciel PT27"],
-                    // PRZERWA 4 (Piątek)
-                    ["Nauczyciel PT28", "Nauczyciel PT29", "Nauczyciel PT30<br>Nauczyciel PT30a", "Nauczyciel PT31", "Nauczyciel PT32", "Nauczyciel PT33", "Nauczyciel PT34", "Nauczyciel PT35", "Nauczyciel PT36"],
-                    // PRZERWA 5 (Piątek)
-                    ["Nauczyciel PT37", "Nauczyciel PT38", "Nauczyciel PT39<br>Nauczyciel PT39a", "Nauczyciel PT40", "Nauczyciel PT41", "Nauczyciel PT42", "Nauczyciel PT43", "Nauczyciel PT44", "Nauczyciel PT45"],
-                    // PRZERWA 6 (Piątek)
-                    ["Nauczyciel PT46", "Nauczyciel PT47", "Nauczyciel PT48<br>Nauczyciel PT48a", "Nauczyciel PT49", "Nauczyciel PT50", "Nauczyciel PT51", "Nauczyciel PT52", "Nauczyciel PT53", "Nauczyciel PT54"],
-                    // PRZERWA 7 (Piątek)
-                    ["Nauczyciel PT55", "Nauczyciel PT56", "Nauczyciel PT57<br>Nauczyciel PT57a", "Nauczyciel PT58", "Nauczyciel PT59", "Nauczyciel PT60", "Nauczyciel PT61", "Nauczyciel PT62", "Nauczyciel PT63"],
-                    // PRZERWA 8 (Piątek)
-                    ["Nauczyciel PT64", "Nauczyciel PT65", "Nauczyciel PT66<br>Nauczyciel PT66a", "Nauczyciel PT67", "Nauczyciel PT68", "Nauczyciel PT69", "Nauczyciel PT70", "Nauczyciel PT71", "Nauczyciel PT72"]
-                ]
-            }
-        };
-
-        // Funkcja do określania indeksu aktualnie trwającej przerwy lub lekcji
-        function getHighlightState(allScheduleData) {
-            const now = new Date();
-            const currentHour = now.getHours();
-            const currentMinute = now.getMinutes();
-            const currentTimeInMinutes = currentHour * 60 + currentMinute;
-
-            // Pobieramy listę przerw, która jest wspólna dla wszystkich dni
-            const breaks = allScheduleData.breaks;
-
-            for (let i = 0; i < breaks.length; i++) {
-                const breakTimeStr = breaks[i];
-                const timeMatch = breakTimeStr.match(/\((\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})\)/);
-
-                if (timeMatch) {
-                    const startHour = parseInt(timeMatch[1]);
-                    const startMinute = parseInt(timeMatch[2]);
-                    const endHour = parseInt(timeMatch[3]);
-                    const endMinute = parseInt(timeMatch[4]);
-
-                    const startTimeInMinutes = startHour * 60 + startMinute;
-                    const endTimeInMinutes = endHour * 60 + endMinute;
-
-                    // Sprawdzamy, czy aktualny czas mieści się w przedziale przerwy (wraz z 10-minutowym wyprzedzeniem)
-                    if (currentTimeInMinutes >= (startTimeInMinutes - 10) && currentTimeInMinutes <= endTimeInMinutes) {
-                        return { type: 'break', index: i }; // Zwracamy indeks aktualnej przerwy
-                    }
-
-                    // Sprawdzamy, czy aktualny czas mieści się w okresie lekcji po tej przerwie
-                    if (i < breaks.length - 1) { // Nie ostatnia przerwa
-                        const nextBreakTimeStr = breaks[i + 1];
-                        const nextTimeMatch = nextBreakTimeStr.match(/\((\d{1,2}):(\d{2})-(\d{1,2}):(\d{2})\)/);
-
-                        if (nextTimeMatch) {
-                            const nextStartHour = parseInt(nextTimeMatch[1]);
-                            const nextStartMinute = parseInt(nextTimeMatch[2]);
-                            const nextStartTimeInMinutes = nextStartHour * 60 + nextStartMinute;
-
-                            // Jeśli aktualny czas jest po zakończeniu obecnej przerwy, ale przed rozpoczęciem następnej
-                            if (currentTimeInMinutes > endTimeInMinutes && currentTimeInMinutes < nextStartTimeInMinutes) {
-                                // To jest okres lekcji. Podświetlamy wiersz następnej przerwy, aby zasygnalizować
-                                // lekcję prowadzącą do niej.
-                                return { type: 'lesson', index: i + 1 };
-                            }
-                        }
-                    }
-                }
-            }
-            return { type: 'none', index: -1 }; // Brak aktywnej przerwy lub lekcji
-        }
-
-        // Funkcja do renderowania tabeli dyżurów na podstawie danych
-        function renderDutySchedule(allScheduleData) {
-            const container = document.getElementById('duty-table-container');
-            const today = new Date();
-            const optionsDay = { weekday: 'long' };
-            // Dynamiczne pobieranie nazwy bieżącego dnia
-            const currentDayName = today.toLocaleDateString('pl-PL', optionsDay).toLowerCase();
-
-            // Pobieramy rozkład dyżurów dla bieżącego dnia
-            const scheduleForToday = allScheduleData.dailySchedules[currentDayName];
-
-            // Jeśli brak rozkładu dla danego dnia (np. weekend lub nieuzupełniony dzień)
-            if (!scheduleForToday) {
-                container.innerHTML = `<p style="font-size:1.2em; margin-top:50px; color:#555;">Brak rozkładu dyżurów na ${currentDayName.charAt(0).toUpperCase() + currentDayName.slice(1)}.</p>`;
-                document.getElementById('currentDay').textContent = currentDayName.charAt(0).toUpperCase() + currentDayName.slice(1);
-                return; // Przerywamy renderowanie, jeśli brak danych
-            }
-
-            let html = '<table>';
-
-            // Określamy stan podświetlenia (przerwa, lekcja, brak)
-            const highlightState = getHighlightState(allScheduleData);
-
-            // Generowanie nagłówków kolumn (miejsca dyżurów)
-            html += '<thead><tr>';
-            html += '<th class="header-break">Przerwa</th>'; // Pusta komórka na początek
-            allScheduleData.locations.forEach(loc => { // Używamy allScheduleData.locations
-                html += `<th class="location-header" style="background-color: ${loc.color};">${loc.name}</th>`;
-            });
-            html += '</tr></thead>';
-
-            // Generowanie wierszy z przerwami i dyżurami
-            html += '<tbody>';
-            allScheduleData.breaks.forEach((breakName, breakIndex) => { // Używamy allScheduleData.breaks
-                let rowClass = '';
-                if (breakIndex === highlightState.index) {
-                    if (highlightState.type === 'break') {
-                        rowClass = 'current-break-row';
-                    } else if (highlightState.type === 'lesson') {
-                        rowClass = 'lesson-active-row';
-                    }
-                }
-                html += `<tr class="${rowClass}"><td class="break-name">${breakName}</td>`;
-                // Używamy scheduleForToday do pobrania nazwisk dla bieżącego dnia
-                scheduleForToday[breakIndex].forEach(duty => {
-                    html += `<td>${duty}</td>`;
-                });
-                html += '</tr>';
-            });
-            html += '</tbody>';
-            html +='</table>';
-
-            container.innerHTML = html;
-
-            // Ustawienie aktualnego dnia w nagłówku, z pierwszą literą dużą
-            document.getElementById('currentDay').textContent = currentDayName.charAt(0).toUpperCase() + currentDayName.slice(1);
-        }
-
-        // Renderuj harmonogram po załadowaniu danych
-        renderDutySchedule(dutyScheduleData);
-
-        // Funkcja do automatycznego odświeżania strony co minutę (60000 milisekund)
-        setInterval(() => {
-            renderDutySchedule(dutyScheduleData);
-        }, 60000); // Odświeżaj co minutę, aby podświetlenie było aktualne
-    </script>
+    <!-- Dołączenie plików z danymi i logiką -->
+    <script src="data.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
